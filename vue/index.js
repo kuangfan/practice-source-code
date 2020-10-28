@@ -8,23 +8,34 @@ function Vue (options) {
 }
 
 Vue.prototype.observer = function (obj) {
-  for (let key in obj) {
-    let value = obj[key]
-    if (typeof value === 'object') {
-      this.observer(value)
-    } else {
-      Object.defineProperty(obj, key, {
-        get: () => {
-          return value
-        },
-        set: (newValue) => {
-          value = newValue
-          console.log(value)
-          this.render()
-        }
-      })
+  // vue2
+  // for (let key in obj) {
+  //   let value = obj[key]
+  //   if (typeof value === 'object') {
+  //     this.observer(value)
+  //   } else {
+  //     Object.defineProperty(obj, key, {
+  //       get: () => {
+  //         return value
+  //       },
+  //       set: (newValue) => {
+  //         value = newValue
+  //         console.log(value)
+  //         this.render()
+  //       }
+  //     })
+  //   }
+  // }
+  // vue3
+  this.$data = new Proxy(obj, {
+    get: (target, key) => {
+      return target[key]
+    },
+    set: (target, key, value) => {
+      target[key] = value
+      this.render()
     }
-  }
+  })
 }
 
 Vue.prototype.render = function () {
